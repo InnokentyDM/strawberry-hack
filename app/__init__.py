@@ -2,6 +2,8 @@ import logging
 from flask import Flask
 
 app = Flask(__name__)
+from gevent import monkey
+monkey.patch_all()
 
 gunicorn_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers = gunicorn_logger.handlers

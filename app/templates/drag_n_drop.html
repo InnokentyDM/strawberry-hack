@@ -1,0 +1,35 @@
+<html>
+
+<head>
+    <link type="text/css" href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+</head>
+
+<body style="padding:100px;background-color:#fafafa;font-family: 'Segoe UI', sans-serif;">
+    <title>Team leuk</title>
+    <h2>Select multiple images to upload and display</h2>
+    <p>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+    <ul class=flashes>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    </p>
+
+    <div id="drop-region">
+        <div class="drop-message">
+            Drag & Drop images or click to upload
+        </div>
+        <div id="image-preview"></div>
+    </div>
+
+    <div id="result">
+    </div>
+
+
+</body>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</html>

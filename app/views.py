@@ -3,6 +3,8 @@ from app import app
 import urllib.request
 from flask import Flask, flash, request, redirect, url_for, render_template
 from werkzeug.utils import secure_filename
+import time
+
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
@@ -11,7 +13,7 @@ def allowed_file(filename):
 	
 @app.route('/')
 def upload_form():
-	return render_template('upload.html')
+	return render_template('drag_n_drop.html')
 
 @app.route('/', methods=['POST'])
 def upload_image():
@@ -25,11 +27,10 @@ def upload_image():
 			filename = secure_filename(file.filename)
 			file_names.append(filename)
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-		#else:
-		#	flash('Allowed image types are -> png, jpg, jpeg, gif')
-		#	return redirect(request.url)
+	time.sleep(2)
+	app.logger.warning(file_names)
 
-	return render_template('upload.html', filenames=file_names)
+	return render_template('result.html', filenames=file_names)
 
 @app.route('/display/<filename>')
 def display_image(filename):

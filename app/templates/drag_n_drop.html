@@ -4,9 +4,9 @@
     <link type="text/css" href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
 </head>
 
-<body style="padding:100px;background-color:#fafafa;font-family: 'Segoe UI', sans-serif;">
-    <title>Team leuk</title>
-    <h2>Select multiple images to upload and display</h2>
+<body style="padding:100px;background-color:#fafafa;">
+    <title>LEUK: Digital Strawberry</title>
+    <h2>LEUK: Digital Strawberry</h2>
     <p>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -21,15 +21,27 @@
 
     <div id="drop-region">
         <div class="drop-message">
-            Drag & Drop images or click to upload
+            <p>Перетащите изображения сюда или нажмите, чтобы выбрать вручную</p>
         </div>
         <div id="image-preview"></div>
     </div>
 
-    <div id="result">
+    <div id="result" class="row">
+    </div>
+    <!-- The expanding image container -->
+    <div class="container">
+        <!-- Close the image -->
+        <span onclick="this.parentElement.style.display='none'" class="closebtn">&times;</span>
+
+        <!-- Expanded image -->
+        <img id="expandedImg" src="" style="width:100%">
+
+        <!-- Image text -->
+        <div id="imgtext"></div>
     </div>
 
 
 </body>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
 </html>

@@ -120,6 +120,8 @@ function clearImagePreviewRegion() {
 
 function clearResultRegion() {
     result.innerHTML = "";
+    var expandImg = document.getElementById("expandedImg");
+    expandImg.src = "";
 }
 
 function previewAnduploadImage(image) {
@@ -127,11 +129,23 @@ function previewAnduploadImage(image) {
     // container
     var imgView = document.createElement("div");
     imgView.className = "image-view";
-    imagePreviewRegion.appendChild(imgView);
+
+
 
     // previewing image
     var img = document.createElement("img");
+    img.setAttribute('style', 'position: relative;z-index: 1;');
     imgView.appendChild(img);
+
+    // append progress bar
+    var progress = document.createElement("img");
+    progress.className = 'progress';
+    progress.setAttribute("src", "/static/images/progress.gif");
+    progress.setAttribute('style', "position: absolute;left:0px; top: 0px;z-index: 10; opacity:0.9;");
+    imgView.appendChild(progress);
+
+    imagePreviewRegion.appendChild(imgView);
+    
 
     // progress overlay
     var overlay = document.createElement("div");
@@ -162,10 +176,19 @@ function previewAnduploadImage(image) {
             if (ajax.status === 200) {
                 var result = document.getElementById('result');
                 var el = document.createElement('div');
-                el.innerHTML = ajax.response
-                result.appendChild(el);
+                el.className = 'column';
+                el.innerHTML = ajax.response;
+                result.append(el);
+                console.log('appended');
+                progress.remove();
+                imgView.remove();
+                console.log('removed');
+                var expandImg = document.getElementById("expandedImg");
+                expandImg.parentElement.style.display = "block";
+                expandImg.src = el.getElementsByTagName("img")[0].src;;
             } else {
                 console.log('fail');
+                progress.remove()
             }
         }
     }
@@ -183,4 +206,17 @@ function previewAnduploadImage(image) {
 
     ajax.send(formData);
 
+}
+
+function myFunction(imgs) {
+    // Get the expanded image
+    var expandImg = document.getElementById("expandedImg");
+    // Get the image text
+    var imgText = document.getElementById("imgtext");
+    // Use the same src in the expanded image as the image being clicked on from the grid
+    expandImg.src = imgs.src;
+    // Use the value of the alt attribute of the clickable image as text inside the expanded image
+    imgText.innerHTML = imgs.alt;
+    // Show the container element (hidden with CSS)
+    expandImg.parentElement.style.display = "block";
 }

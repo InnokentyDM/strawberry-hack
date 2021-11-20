@@ -1,5 +1,5 @@
 import os
-from app import app
+from app import app, intelligence
 import urllib.request
 from flask import Flask, flash, request, redirect, url_for, render_template
 from werkzeug.utils import secure_filename
@@ -27,10 +27,13 @@ def upload_image():
 			filename = secure_filename(file.filename)
 			file_names.append(filename)
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-	time.sleep(2)
-	app.logger.warning(file_names)
-
-	return render_template('result.html', filenames=file_names)
+	result_files = []
+	for file in files:
+		app.logger.warning(file.filename)
+		path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+		leaf_file = intelligence.find_leafs(path)
+		result_files.append(leaf_file)
+	return render_template('result.html', filenames=result_files)
 
 @app.route('/display/<filename>')
 def display_image(filename):

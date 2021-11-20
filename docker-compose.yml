@@ -6,8 +6,7 @@ services:
     env_file: .env
     build: .
     volumes:
-      - ./static/uploads:/static/uploads
-      - ./static:/static:ro
+      - ./static:/static
     networks:
       - web_network
   nginx:
@@ -19,8 +18,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/configs:/etc/nginx/conf.d:ro
-      - ./static/uploads:/static/uploads
-      - ./static:/static:ro
+      - ./static:/static
     networks:
       - web_network
     depends_on: 

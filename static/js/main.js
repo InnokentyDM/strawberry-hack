@@ -5,6 +5,7 @@ var imagePreviewRegion = document.getElementById("image-preview");
 
 var result = document.getElementById('result');
 
+var img_storage = {};
 
 // open file selector when clicked on the drop region
 var fakeInput = document.createElement("input");
@@ -87,6 +88,7 @@ dropRegion.addEventListener('drop', handleDrop, false);
 
 
 function handleFiles(files) {
+    img_storage = {};
     clearResultRegion();
     clearImagePreviewRegion();
     for (var i = 0, len = files.length; i < len; i++) {
@@ -120,8 +122,10 @@ function clearImagePreviewRegion() {
 
 function clearResultRegion() {
     result.innerHTML = "";
-    var expandImg = document.getElementById("expandedImg");
-    expandImg.src = "";
+    var mlImg = document.getElementById("ml");
+    mlImg.src = "";
+    var opencvImg = document.getElementById("opencv");
+    opencvImg.src = "";
 }
 
 function previewAnduploadImage(image) {
@@ -175,17 +179,36 @@ function previewAnduploadImage(image) {
         if (ajax.readyState === 4) {
             if (ajax.status === 200) {
                 var result = document.getElementById('result');
+                var response_data = JSON.parse(ajax.response);
+
                 var el = document.createElement('div');
                 el.className = 'column';
-                el.innerHTML = ajax.response;
+                el.innerHTML = response_data['original'];
+
+                var original_file_src = el.getElementsByTagName("img")[0].src;
+
+                var open_cv_el = document.createElement('div');
+                open_cv_el.innerHTML = response_data['open_cv'];
+                var open_cv_src = open_cv_el.getElementsByTagName("img")[0].src;
+
+                var ml_el = document.createElement('div');
+                ml_el.innerHTML = response_data['ml'];
+                var ml_src = ml_el.getElementsByTagName("img")[0].src;
+
+                img_storage[original_file_src] = {'original': original_file_src, 'open_cv': open_cv_src, 'ml': ml_src};
+
                 result.append(el);
-                console.log('appended');
                 progress.remove();
                 imgView.remove();
-                console.log('removed');
-                var expandImg = document.getElementById("expandedImg");
-                expandImg.parentElement.style.display = "block";
-                expandImg.src = el.getElementsByTagName("img")[0].src;;
+
+                var mlImg = document.getElementById("ml");
+                mlImg.parentElement.style.display = "block";
+                mlImg.src = ml_src;
+                
+                var opencvImg = document.getElementById("opencv");
+                opencvImg.parentElement.style.display = "block";
+                opencvImg.src = open_cv_src;
+
             } else {
                 console.log('fail');
                 progress.remove()
@@ -209,14 +232,10 @@ function previewAnduploadImage(image) {
 }
 
 function myFunction(imgs) {
-    // Get the expanded image
-    var expandImg = document.getElementById("expandedImg");
-    // Get the image text
-    var imgText = document.getElementById("imgtext");
-    // Use the same src in the expanded image as the image being clicked on from the grid
-    expandImg.src = imgs.src;
-    // Use the value of the alt attribute of the clickable image as text inside the expanded image
-    imgText.innerHTML = imgs.alt;
-    // Show the container element (hidden with CSS)
-    expandImg.parentElement.style.display = "block";
+    var images = img_storage[imgs.src];
+    var mlImg = document.getElementById("ml");
+    mlImg.src = images['ml'];
+    var opencvImg = document.getElementById("opencv");
+    opencvImg.src = images['open_cv'];
+    mlImg.parentElement.style.display = "block";    
 }

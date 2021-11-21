@@ -1,0 +1,15 @@
+*.pyc
+.vscode/
+venv/
+__pycache__
+.ipynb_checkpoints
+.DS_Store/
+migrations/
+postgres-data/
+.mypy_cache
+.pytest_cache
+api.log
+test.db
+creds.ini
+static/uploads/*
+ml_research/

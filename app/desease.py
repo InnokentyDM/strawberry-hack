@@ -43,6 +43,6 @@ def detect_disease(picture_path, weights_path):
  
         for cls, proba in zip(classes, predict_proba):
             print(f"{cls:<30s}", f"{proba:.3f}", proba > threshold)
-            result += str(f"{cls:<30s}") + str(f"{proba:.3f}") + str(proba > threshold) + '\n'
+            result += str(f"{cls:<30s}") + str(f"{proba:.3f} ") + str(proba > threshold) + '\n'
  
         return result

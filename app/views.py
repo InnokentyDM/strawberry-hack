@@ -1,9 +1,10 @@
 from logging import warning
 import os
-from app import app, intelligence, ml
+from app import app, intelligence, ml, desease
 import urllib.request
 from flask import Flask, flash, request, redirect, url_for, render_template, jsonify
 from werkzeug.utils import secure_filename
+
 
 
 
@@ -39,6 +40,7 @@ def upload_image():
 		ml_file = ml.detect_strawsberry(path, ml.model)
 		result_files['open_cv'] = render_template('result_item.html', filename=leaf_file)
 		result_files['original'] = render_template('result_item.html', filename=filename)
+		result_files['deseases'] = desease.detect_disease(path, 'strawdisease.pt')
 		ml_file = ml_file.replace('/static/uploads/', '')
 		result_files['ml'] = render_template('result_item.html', filename=ml_file)
 	# return render_template('result.html', filenames=result_files)

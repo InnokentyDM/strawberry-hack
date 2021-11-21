@@ -5,6 +5,7 @@ from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
 import cv2
 import numpy as np
+import math
 from PIL import Image
 from torchvision import transforms as T
  
@@ -16,6 +17,41 @@ def init_model():
     model.load_state_dict(torch.load('rcnn_demo.pt'))
     model.eval()
     return model
+
+def crop_image(img, x1, y1, x2, y2):
+    min_x = min(x1, x2)
+    max_x = max(x1, x2)
+    min_y = min(y1, y2)
+    max_y = max(y1, y2)
+    return img[min_y:max_y, min_x:max_x]
+
+def distance(c1, c0):
+    r1, g1, b1 = map(lambda x: x / 255.0, c1)
+    r2, g2, b2 = map(lambda x: x / 255.0, c0)
+    distance = math.sqrt((r2-r1)**2+(g2-g1)**2+(b2-b1)**2)
+    return distance
+
+def ripeness(mean_color):
+    ripe_color = (136, 23, 13)
+    ripeness = min(1.0, (1.0 - distance(ripe_color, mean_color)) / 0.9)
+    return ripeness
+
+def crop_image(img, x1, y1, x2, y2):
+    min_x = min(x1, x2)
+    max_x = max(x1, x2)
+    min_y = min(y1, y2)
+    max_y = max(y1, y2)
+    return img[min_y:max_y, min_x:max_x, :]
+
+def unique_count_app(a):
+    colors, count = np.unique(a.reshape(-1,a.shape[-1]), axis=0, return_counts=True)
+    return colors[count.argmax()]
+
+def strawberry_ripeness(img):
+    img = crop_image(img, int(img.shape[0]/3), int(img.shape[1]/3), int(2*img.shape[0]/3), int(2*img.shape[1]/3))
+    img_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    color = unique_count_app(img)
+    return ripeness(color)
  
 def detect_strawsberry(picture_path, model):
     print('Loaded')
@@ -44,7 +80,7 @@ def detect_strawsberry(picture_path, model):
     print(boxes, scores)
  
     font = cv2.FONT_HERSHEY_SIMPLEX
-    fontScale = 0.4
+    fontScale = 1.0
     fontColor = (255, 0, 0)
     thickness = 1
     lineType = 1
@@ -56,11 +92,12 @@ def detect_strawsberry(picture_path, model):
         x2 *= scale1
         y1 *= scale2
         y2 *= scale2
-        if score > 0.5:
+        if score > 0.9:
             p1 = int(x1), int(y1)
             p2 = int(x2), int(y2)
             cv2.rectangle(res, p1, p2, (int(255 * score), 0, 0), 2)
-            cv2.putText(res, f"{score:.3f}",
+            ripeness = strawberry_ripeness(crop_image(res, int(x1), int(y1), int(x2), int(y2)))
+            cv2.putText(res, f"{ripeness:.3f}",
                         p1,
                         font,
                         fontScale,

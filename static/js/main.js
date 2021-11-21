@@ -126,6 +126,8 @@ function clearResultRegion() {
     mlImg.src = "";
     var opencvImg = document.getElementById("opencv");
     opencvImg.src = "";
+    var imgtext = document.getElementById('imgtext');
+    imgtext.innerHTML = "";
 }
 
 function previewAnduploadImage(image) {
@@ -195,11 +197,23 @@ function previewAnduploadImage(image) {
                 ml_el.innerHTML = response_data['ml'];
                 var ml_src = ml_el.getElementsByTagName("img")[0].src;
 
-                img_storage[original_file_src] = {'original': original_file_src, 'open_cv': open_cv_src, 'ml': ml_src};
+                img_storage[original_file_src] = {
+                    'original': original_file_src, 
+                    'open_cv': open_cv_src, 
+                    'ml': ml_src,
+                    'deseases': response_data['deseases']
+                };
+
+                var imgtext = document.getElementById('imgtext');
+                imgtext.innerHTML = "";
+                var p = document.createElement("p");
+                p.textContent = response_data["deseases"];
+                p.style = "white-space: pre-line;";
+                imgtext.append(p);
 
                 result.append(el);
                 progress.remove();
-                imgView.remove();
+                // imgView.remove();
 
                 var mlImg = document.getElementById("ml");
                 mlImg.parentElement.style.display = "block";
@@ -238,4 +252,12 @@ function myFunction(imgs) {
     var opencvImg = document.getElementById("opencv");
     opencvImg.src = images['open_cv'];
     mlImg.parentElement.style.display = "block";    
+
+
+    var imgtext = document.getElementById('imgtext');
+    imgtext.innerHTML = "";
+    var p = document.createElement("p");
+    p.style = "white-space: pre-line;";
+    p.textContent = images["deseases"];
+    imgtext.append(p);
 }
